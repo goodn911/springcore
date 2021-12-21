@@ -4,11 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.springcore.dto.KakaoUserInfoDto;
+import com.sparta.springcore.jwt.JwtTokenProvider;
 import com.sparta.springcore.model.User;
 import com.sparta.springcore.model.UserRoleEnum;
 import com.sparta.springcore.repository.UserRepository;
 import com.sparta.springcore.security.UserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,20 +24,17 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
-
+@RequiredArgsConstructor
 @Service
 public class KakaoUserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    public KakaoUserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
 
-    public void kakaoLogin(String code) throws JsonProcessingException {
+    public void kakaoLogin(String code,HttpServletResponse response) throws JsonProcessingException {
 // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -47,7 +45,7 @@ public class KakaoUserService {
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
 // 4. 강제 로그인 처리
-        forceLogin(kakaoUser);
+        forceLogin(kakaoUser,response);
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -105,7 +103,7 @@ public class KakaoUserService {
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
 
-        return new KakaoUserInfoDto(id, nickname, email);
+        return new KakaoUserInfoDto(id,nickname, email);
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
@@ -133,9 +131,13 @@ public class KakaoUserService {
         return kakaoUser;
     }
 
-    private void forceLogin(User kakaoUser) {
+    private void forceLogin(User kakaoUser, HttpServletResponse response) {
         UserDetails userDetails = new UserDetailsImpl(kakaoUser);
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        User user = userRepository.findByUsername(kakaoUser.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 username 입니다."));
+        response.addHeader("Authorization","Bearer "+jwtTokenProvider.createToken(user.getUsername(),Long.toString(user.getId())));
     }
 }

@@ -1,4 +1,5 @@
 package com.sparta.springcore.model;
+import com.sparta.springcore.dto.UsernameDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -48,5 +49,10 @@ public class User {
         this.email = email;
         this.role = role;
         this.kakaoId = kakaoId;
+    }
+
+    public void update(UsernameDto usernameDto){
+
+        this.username=usernameDto.getUsername();
     }
 }

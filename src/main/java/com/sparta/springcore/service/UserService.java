@@ -1,8 +1,10 @@
 package com.sparta.springcore.service;
 import com.sparta.springcore.dto.SignupRequestDto;
+import com.sparta.springcore.dto.UsernameDto;
 import com.sparta.springcore.model.User;
 import com.sparta.springcore.model.UserRoleEnum;
 import com.sparta.springcore.repository.UserRepository;
+import com.sparta.springcore.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,5 +46,14 @@ public class UserService {
 
         User user = new User(username, password, email, role);
         userRepository.save(user);
+    }
+
+    public void postUser(UsernameDto usernameDto, UserDetailsImpl userDetails) {
+       User user1 = userRepository.findByUsername(userDetails.getUser().getUsername()).orElseThrow(
+               ()-> new IllegalArgumentException("없음")
+       );
+
+       user1.update(usernameDto);
+
     }
 }
