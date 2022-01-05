@@ -29,8 +29,8 @@ before_deploy:
 deploy:
   # S3로 파일업로드
   - provider: s3
-    access_key_id: $AKIAXK7ZLYSY3QSDWWN4 # Travis repo settings에 설정된 값
-    secret_access_key: $IDxz8dpxvUCIORoE8TVrVZpEZFZc4cdY06vK/+E1 # Travis repos settings에 설정된 값
+    access_key_id: AKIAXK7ZLYSY3QSDWWN4 # Travis repo settings에 설정된 값
+    secret_access_key: IDxz8dpxvUCIORoE8TVrVZpEZFZc4cdY06vK/+E1 # Travis repos settings에 설정된 값
     bucket: spring-deploy-test-build # s3 버킷
     region: ap-northeast-2
     skip_cleanup: true
