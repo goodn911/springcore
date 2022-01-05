@@ -1,7 +1,6 @@
 package com.sparta.springcore.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.springcore.dto.SignupRequestDto;
-import com.sparta.springcore.dto.UsernameDto;
 import com.sparta.springcore.security.UserDetailsImpl;
 import com.sparta.springcore.service.KakaoUserService;
 import com.sparta.springcore.service.UserService;
@@ -49,10 +48,5 @@ public class UserController {
         return "redirect:/";
     }
 
-    @PutMapping("/username")
-    public void postUser(@RequestBody UsernameDto usernameDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-
-        userService.postUser(usernameDto,userDetails);
-    }
 }
 

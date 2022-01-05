@@ -1,6 +1,5 @@
 package com.sparta.springcore.service;
 import com.sparta.springcore.dto.SignupRequestDto;
-import com.sparta.springcore.dto.UsernameDto;
 import com.sparta.springcore.model.User;
 import com.sparta.springcore.model.UserRoleEnum;
 import com.sparta.springcore.repository.UserRepository;
@@ -48,12 +47,4 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void postUser(UsernameDto usernameDto, UserDetailsImpl userDetails) {
-       User user1 = userRepository.findByUsername(userDetails.getUser().getUsername()).orElseThrow(
-               ()-> new IllegalArgumentException("없음")
-       );
-
-       user1.update(usernameDto);
-
-    }
 }
