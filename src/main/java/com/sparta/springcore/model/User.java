@@ -49,4 +49,6 @@ public class User {
         this.role = role;
         this.kakaoId = kakaoId;
     }
+
+
 }
