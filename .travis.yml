@@ -20,8 +20,4 @@ notifications:
     recipients:
       - jong9712@naver.com
 
-before_deploy:
-  - zip -r spring_deploy_test *
-  - mkdir -p deploy
-  - mv spring_deploy_test.zip deploy/spring_deploy_test.zip
 
